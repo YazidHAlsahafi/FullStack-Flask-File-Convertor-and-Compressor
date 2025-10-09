@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block head %}
+<style>
+    table,
+    td,
+    th {
+        border: 2px solid #000000;
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 90%;
+        margin-left: 5%;
+        margin-bottom: 5%;
+    }
+
+    th {
+        height: 30px;
+        background-color: goldenrod;
+        color: aliceblue;
+    }
+
+    td {
+        text-align: center;
+        padding: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<h1 style="text-align: center; padding: 14px 16px;">الملفات</h1>
+{% if files|length >0 %}
+<table>
+    <tr>
+        <th>ID</th>
+        <th>اسم الملف</th>
+        <th>تاريخ الرفع</th>
+        <th>العمليات</th>
+    </tr>
+    {% for file in files %}
+    <tr>
+        <td>{{ file.id }}</td>
+        <td>{{ file.name }}</td>
+        <td>{{ file.date.date() }}</td>
+        <td><a href="/delete/{{file.id}}" style="color: red; padding: 14px 16px;">حذف </a><a
+                href="/download/{{file.id}}" style="color: green; padding: 14px 16px;">تحميل</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p style="text-align: center;">لا توجد ملفات مرفوعه</p>
+{% endif %}
+{% endblock %}

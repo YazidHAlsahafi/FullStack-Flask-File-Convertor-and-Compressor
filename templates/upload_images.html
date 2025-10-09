@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block head %}
+<style>
+  #fileL {
+    border: 1px solid #000000;
+    background-color: #2a5bd5;
+    border-radius: 10px;
+    padding: 50px 200px;
+    transition: .5s;
+    margin-left: 20%;
+    margin-top: 5%;
+    width: 10%;
+    height: 10%;
+    text-align: center;
+    display: inline-block;
+    color: white;
+  }
+
+  #fileL:hover {
+    background-color: #2249ac;
+    cursor: pointer;
+  }
+  select {
+    border-radius: 10px;
+    width: 15%;
+    height: 130px;
+    font-family: Cairo;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  #submit {
+    display: inline-block;
+    border: 1px solid #000000;
+    border-radius: 10px;
+    width: 10%;
+    height: 120px;
+    transition: .5s;
+  }
+
+  #submit:hover {
+    background-color: #ddd;
+    cursor: pointer;
+  }
+</style>
+
+{% endblock %}
+
+{% block body %}
+
+<h1 style="text-align: center; padding: 14px 16px;">  تحويل صيغ الصور</h1>
+<form method="POST" action="/images" enctype="multipart/form-data">
+  <label for="files" id="fileL">اختيار الملف</label>
+  <input type="file" name="file" required id="files" style="display:none;">
+  <select name="format" required>
+    <option disabled selected>اختيار الصيغة المطلوبة</option>
+    <option value="jpg">JPG</option>
+    <option value="png">PNG</option>
+    <option value="webp">WEBP</option>
+  </select>
+  <button id="submit" style="font-family: 'Cairo'; font-weight: bold;">رفع الملف</button>
+</form>
+<h6 style="text-align: center;">JPG, JPEG, PNG, WEBP : الصيغ المسموحة</h2>
+<script>
+  document.querySelector("#files").onchange = function () {
+    const fileName = this.files[0]?.name;
+    const label = document.querySelector("label[for=files]");
+    label.innerText = fileName ?? "اختيار الملف";
+  };
+</script>
+{% if x == 2 %}
+<p style="color: red; font-size: 42px; font-weight: bold;">Unsupported file type, only JPG, JPEG, PNG, WEBP images are supported.
+</p>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href='https://fonts.googleapis.com/css?family=Cairo' rel='stylesheet'>
+  <title>File Convertor</title>
+  <style>
+    .navbar {
+      overflow: hidden;
+    }
+
+    body {
+      font-family: 'Cairo';
+      font-weight: bold;
+    }
+
+    .navbar a {
+      float: right;
+      font-size: 16px;
+      color: black;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+      margin-top: 2%;
+    }
+
+    .dropdown {
+      float: right;
+      overflow: hidden;
+      margin-top: 2%;
+      font-family: 'Cairo';
+      font-weight: bold;
+    }
+
+    .dropdown .dropbtn {
+      cursor: pointer;
+      font-size: 16px;
+      border: none;
+      outline: none;
+      color: black;
+      padding: 14px 16px;
+      background-color: inherit;
+      margin: 0;
+      font-family: 'Cairo';
+      font-weight: bold;
+    }
+
+    .navbar a:hover,
+    .dropdown:hover .dropbtn,
+    .dropbtn:focus {
+      background-color: #ddd;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 105px;
+
+
+
+    }
+
+    .dropdown-content a {
+      float: none;
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      text-align: right;
+    }
+
+    .dropdown-content a:hover {
+      background-color: #ddd;
+    }
+
+    .show {
+      display: block;
+    }
+  </style>
+  {% block head %} {% endblock %}
+</head>
+
+<body>
+  <div class="navbar">
+    <img src="/static/logo.png" style="float: right; width: 25%; height: 25%;"></img>
+    <div class="dropdown">
+      <button class="dropbtn" onclick="myFunction()">⌄ الصفحات</button>
+      <div class="dropdown-content" id="myDropdown">
+        <a href="/go/1">تحويل الملفات المكتبية</a>
+        <a href="/go/2">تحويل ملفات الصور</a>
+        <a href="/go/4">تحويل ملفات الفيديو</a>
+        <a href="/go/5">ضغط الملفات</a>
+        <a href="/go/3">الملفات</a>
+      </div>
+    </div>
+    <a href="/logout" style="float: left; position: absolute;">تسجيل الخروج</a>
+  </div>
+  </div>
+  {% block body %} {% endblock %}
+  <script>
+    /* When the user clicks on the button, 
+    toggle between hiding and showing the dropdown content */
+    function myFunction() {
+      document.getElementById("myDropdown").classList.toggle("show");
+    }
+
+    // Close the dropdown if the user clicks outside of it
+    window.onclick = function (e) {
+      if (!e.target.matches('.dropbtn')) {
+        var myDropdown = document.getElementById("myDropdown");
+        if (myDropdown.classList.contains('show')) {
+          myDropdown.classList.remove('show');
+        }
+      }
+    }
+  </script>
+</body>
+
+</html>

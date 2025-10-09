@@ -1,0 +1,28 @@
+# Virtual environment
+venv/
+.env/
+
+# Python cache and logs
+__pycache__/
+*.pyc
+*.pyo
+*.log
+
+# Database and local files
+*.sqlite3
+*.db
+
+# Uploads and temp files
+uploads/
+ocr_temp.pdf
+*.pdf~
+*.docx~
+*.tmp
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE settings
+.vscode/
+.idea/

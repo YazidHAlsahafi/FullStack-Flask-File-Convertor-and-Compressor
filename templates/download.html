@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block head %}
+<style>
+    #download {
+        border: 1px solid #000000;
+        background-color: #1de524;
+        border-radius: 10px;
+        padding: 50px 200px;
+        transition: .5s;
+        margin-left: 25%;
+        margin-top: 10%;
+        width: 20%;
+        height: 10%;
+        text-align: center;
+        display: inline-block;
+        color: white;
+        text-decoration: none;
+    }
+
+    #download:hover {
+        background-color: #16ae1b;
+    }
+    #size {
+        display: inline-block;
+        margin-left: 42%;
+    }
+
+</style>
+{% endblock %}
+
+{% block body %}
+<a href="/download/{{ ids }}" id="download">تحميل الملف المتحول</a>
+{% if x == 2 %}
+<br>
+<div id="size">
+<p style="text-align: center;">{{ ogsize }} MB :حجم الملف الأصلي</p>
+<p style="text-align: center;">{{ csize }} MB :حجم الملف المضغوط</p>
+</div>
+{% endif %}
+{% endblock %}
