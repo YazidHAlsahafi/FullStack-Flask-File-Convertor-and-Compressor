@@ -3,108 +3,8 @@ from io import BytesIO
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from pathlib import Path
-import subprocess
-from pdf2docx import Converter
-from PIL import Image
-from moviepy import VideoFileClip
 import uuid
-import mimetypes
-
-# --- Conversion Functions ---
-def docx_to_pdf(input_path, output_path):
-    """
-    On Linux servers, the path to soffice.exe will change to just 'libreoffice'
-    """
-    subprocess.run([
-        "C:\Program Files\LibreOffice\program\soffice.exe", "--headless", "--convert-to", "pdf",
-        "--outdir", str(Path(output_path).parent), str(input_path)
-    ], check=True)
-
-
-def ocr_pdf_to_docx(pdf_path, output_path, lang):
-    import subprocess
-    temp_pdf = UPLOAD_FOLDER / "ocr_temp.pdf"
-
-    # Run OCRmyPDF command
-    subprocess.run([
-        "ocrmypdf",
-       "--force-ocr",
-        "--language", lang,
-        str(pdf_path),
-        str(temp_pdf)
-    ], check=True)
-
-    # Convert to DOCX
-    cv = Converter(temp_pdf)
-    cv.convert(output_path, start=0, end=None)
-    cv.close()
-    print(f"✅ OCR-based DOCX saved: {output_path}")
-
-
-def convert_image(input_path, output_format):
-    """
-    Converts images between formats using Pillow (PIL).
-    Example: PNG -> JPG, WEBP -> PNG, etc.
-    """
-    img = Image.open(input_path).convert("RGB")  # Convert to RGB to avoid mode issues
-    output_path = Path(input_path).with_suffix(f".{output_format.lower()}")
-    img.save(output_path)
-    print(f"✅ Image converted to {output_path}")
-    return output_path
-
-def convert_video(input_path, output_format):
-    """
-    Converts video formats using MoviePy and FFmpeg.
-    Example: MKV -> MP4, AVI -> MOV, etc.
-    """
-    input_path = Path(input_path)
-    output_path = input_path.with_suffix(f".{output_format.lower()}")
-    with VideoFileClip(str(input_path)) as clip:
-        clip.write_videofile(str(output_path), codec='libx264', audio_codec='aac')
-    print(f"✅ Video converted to {output_path}")
-    return output_path
-
-# --- Compression Functions ---
-
-def compress_image(input_path, output_path, level):
-    """Compress image based on user-selected level (high, medium, low)."""
-    quality_map = {
-        "high": 30,      # smallest file
-        "medium": 60,    # balanced
-        "low": 85        # best quality
-    }
-    quality = quality_map.get(level.lower())
-
-    if quality is None:
-        raise ValueError(f"Invalid compression level: {level}")
-
-    img = Image.open(input_path)
-    img.save(output_path, optimize=True, quality=quality)
-    print(f"🖼️ Image compressed at {level} level → {output_path}")
-
-
-def compress_video(input_path, output_path, level):
-    """Compress video using ffmpeg based on user-selected level (high, medium, low)."""
-    bitrate_map = {
-        "high": "500k",     # smallest file
-        "medium": "1000k",  # balanced
-        "low": "2000k"      # best quality
-    }
-    bitrate = bitrate_map.get(level.lower())
-
-    if bitrate is None:
-        raise ValueError(f"Invalid compression level: {level}")
-
-    subprocess.run([
-        "ffmpeg", "-y",
-        "-i", str(input_path),
-        "-b:v", bitrate,
-        str(output_path)
-    ], check=True)
-    print(f"🎬 Video compressed at {level} level → {output_path}")
-
-
-
+from functions import *
 
 # --- File Upload Config ---
 """
@@ -160,10 +60,14 @@ def cleanup_uploads():
 
 
 # --- Routes ---
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def index():
     user_id = get_or_create_user()
+    return render_template('index.html')
 
+@app.route('/convert/<doc>', methods=['GET', 'POST'])
+def documents(doc):
+    user_id = get_or_create_user()
     if request.method == 'POST':
         file = request.files['file']
         input_path = Path(UPLOAD_FOLDER) / file.filename
@@ -176,10 +80,13 @@ def index():
             db.session.add(upload)
 
             # Convert
-            if ext == ".docx":
+            if doc == "docx":
                 output_path = input_path.with_suffix(".pdf")
                 docx_to_pdf(input_path, output_path)
-            elif ext == ".pdf":
+            elif doc == "pdf":
+                output_path = input_path.with_suffix(".docx")
+                pdf_to_docx(input_path, output_path)
+            elif doc == "pdf_ocr":
                 output_path = input_path.with_suffix(".docx")
                 ocr_pdf_to_docx(input_path, output_path, lang='ara')
 
@@ -195,8 +102,22 @@ def index():
         else:
             # Delete invalid upload
             cleanup_uploads()
-            return render_template('upload.html', x=2)
-    return render_template('upload.html')
+            return render_template('upload.html', x=2, doc=doc)
+    match doc:
+        case 'pdf':
+            return render_template('upload.html', doc=doc)
+        case 'docx':
+            return render_template('upload.html', doc=doc)
+        case 'pdf_ocr':
+            return render_template('upload.html', doc=doc)
+
+            
+
+
+
+
+
+
 
 
 
@@ -214,6 +135,10 @@ def images():
         input_path = UPLOAD_FOLDER / file.filename
         file.save(input_path)
         ext = input_path.suffix.lower()
+
+        if ext == ('.'+target_format):
+            cleanup_uploads()
+            return render_template("upload_images.html", x=1)
 
         if ext in ['.png','.jpg','.jpeg','.webp']:
             upload = Upload(name=file.filename, data=input_path.read_bytes(), user_id=user_id)
@@ -246,6 +171,10 @@ def video():
         input_path = UPLOAD_FOLDER / file.filename
         file.save(input_path)
         ext = input_path.suffix.lower()
+
+        if ext == ('.'+target_format):
+            cleanup_uploads()
+            return render_template("upload_video.html", x=1)
 
         if ext in ['.mkv','.mp4','.avi','.mov']:
             upload = Upload(name=file.filename, data=input_path.read_bytes(), user_id=user_id)
@@ -358,23 +287,6 @@ def compress():
             return render_template('compress.html', error=f"Compression failed: {e}")
 
     return render_template('compress.html')
-
-
-
-@app.route('/go/<page>')
-def navigate(page):
-    match page:
-        case '1':
-            return redirect('/')
-        case '3':
-            return redirect('/files')
-        case '2':
-            return redirect('/images')
-        case '4':
-            return redirect('/videos')
-        case '5':
-            return redirect('/compress')
-
 
 # --- Run App ---
 if __name__ == "__main__":

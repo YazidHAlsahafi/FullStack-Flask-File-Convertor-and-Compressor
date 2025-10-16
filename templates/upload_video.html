@@ -51,7 +51,7 @@
 <h1 style="text-align: center; padding: 14px 16px;">  تحويل صيغ الفيديوهات</h1>
 <form method="POST" action="/videos" enctype="multipart/form-data">
   <label for="files" id="fileL">اختيار الملف</label>
-  <input type="file" name="file" required id="files" style="display:none;">
+  <input type="file" name="file" required id="files" style="display:none;" accept=".mp4, .mkv, .avi, .mov">
   <select name="format" required>
     <option disabled selected>اختيار الصيغة المطلوبة</option>
     <option value="mp4">MP4</option>
@@ -71,6 +71,10 @@
 </script>
 {% if x == 2 %}
 <p style="color: red; font-size: 42px; font-weight: bold;">Unsupported file type, only MP4, MKV, AVI, MOV videos are supported.
+</p>
+{% endif %}
+{% if x == 1 %}
+<p dir="rtl" style="color: red; font-size: 42px; font-weight: bold;">لا يسمح تغير صيغة الفيدو الى نفس الصيغة.
 </p>
 {% endif %}
 

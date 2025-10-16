@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block head %}
+<style>
+    .card{
+        box-sizing: border-box;
+        box-shadow: 0px 1px 8px 0px;
+        width: 30%;
+        display: inline-block;
+        padding: 5px ;
+        margin-left: 2.5%;
+        margin-bottom: 50px;
+        text-align: right;
+        border-radius: 10px;
+        transition: 0.5s;
+    }
+    .card:hover{
+        background-color: #ddd;
+        cursor: pointer;
+    }
+    .card img{
+        width: 50px;
+        height: 50px;
+        display: inline-block;
+        
+    }
+    .card #arrow{
+        width: 25px;
+        height: 25px;
+        display: inline-block;
+        margin-bottom: 10px;
+    }
+    .card span {
+        position:absolute; 
+        width:100%;
+        height:100%;
+        top:0;
+        left: 0;
+        z-index: 1;
+    }
+
+    #link{
+    position: relative;
+    z-index: 2;
+    text-decoration: none;
+    font-weight: 400;
+    color: black;
+    }
+    
+</style>
+{% endblock %}
+
+{% block body %}
+<a href="/convert/pdf" id="link">
+<div class="card">
+    <img src="/static/logos/word.png" alt="docx"> <img id='arrow' src="/static/logos/arrow.png" alt="arrow"> <img src="/static/logos/pdf.png" alt="pdf"> 
+<h1>DOCX الى PDF</h1>
+<p dir="rtl">تحويل ملفات PDF الى ملفات DOCX بطريقة تحفظ محتويات الملف بحيث يمكن تعديله.</p>
+</div>
+</a>
+<a href="/convert/pdf_ocr" id="link">
+<div class="card">
+    <img src="/static/logos/word.png" alt="docx"> <img id='arrow' src="/static/logos/arrow.png" alt="arrow"> <img src="/static/logos/pdf.png" alt="pdf"> 
+<h1>DOCX الى ocrPDF</h1>
+<p dir="rtl">تحويل ملفات PDF الى ملفات DOCX بطريقة تحفظ شكل الملف الأصلي طبق الأصل ولكن لايمكن تعديله.</p>
+</div>
+</a>
+<a href="/convert/docx" id="link">
+<div class="card">
+    <img src="/static/logos/pdf.png" alt="pdf"> <img id='arrow' src="/static/logos/arrow.png" alt="arrow"> <img src="/static/logos/word.png" alt="docx"> 
+<h1>PDF الى DOCX</h1>
+<p dir="rtl">تحويل ملفات DOCX الى ملفات PDF بطريقة تحفظ المحتويات بشكل تام.</p>
+</div>
+</a>
+<a href="/images" id="link">
+<div class="card">
+    <img id='icon' src="/static/logos/image.png" alt="image">
+<h1>تغير صيغ الصور</h1>
+<p dir="rtl">تغير صيغ ملفات الصور.</p>
+<br>
+</div>
+</a>
+<a href="/videos" id="link">
+<div class="card">
+    <img id='icon' src="/static/logos/video.png" alt="video">
+<h1>تغير صيغ الفيدواهات</h1>
+<p dir="rtl">تغير صيغ ملفات الفيدو.</p>
+<br>
+</div>
+</a>
+<a href="/compress" id="link">
+<div class="card">
+    <img id='icon' src="/static/logos/compress.png" alt="compress">
+<h1>تقليص حجم الصور والفيدواهات</h1>
+<p dir="rtl">تقليص حجم ملفات الصور والفيدواهات.</p>
+<br>
+</div>
+</a>
+
+{% endblock %}

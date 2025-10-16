@@ -51,7 +51,7 @@
 <h1 style="text-align: center; padding: 14px 16px;">  تحويل صيغ الصور</h1>
 <form method="POST" action="/images" enctype="multipart/form-data">
   <label for="files" id="fileL">اختيار الملف</label>
-  <input type="file" name="file" required id="files" style="display:none;">
+  <input type="file" name="file" required id="files" style="display:none;" accept=".png, .jpg, .jpeg, .webp">
   <select name="format" required>
     <option disabled selected>اختيار الصيغة المطلوبة</option>
     <option value="jpg">JPG</option>
@@ -70,6 +70,10 @@
 </script>
 {% if x == 2 %}
 <p style="color: red; font-size: 42px; font-weight: bold;">Unsupported file type, only JPG, JPEG, PNG, WEBP images are supported.
+</p>
+{% endif %}
+{% if x == 1 %}
+<p dir="rtl" style="color: red; font-size: 42px; font-weight: bold;">لا يسمح تغير صيغة الصورة الى نفس الصيغة.
 </p>
 {% endif %}
 

@@ -9,6 +9,7 @@ __pycache__/
 *.log
 
 # Database and local files
+*.sqlite
 *.sqlite3
 *.db
 
