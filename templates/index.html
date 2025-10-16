@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% block head %}
 <style>
+    .cardcontain{
+        display: inline;
+    }
+
     .card{
         box-sizing: border-box;
         box-shadow: 0px 1px 8px 0px;
@@ -50,6 +54,7 @@
 {% endblock %}
 
 {% block body %}
+<div class="cardcontain">
 <a href="/convert/pdf" id="link">
 <div class="card">
     <img src="/static/logos/word.png" alt="docx"> <img id='arrow' src="/static/logos/arrow.png" alt="arrow"> <img src="/static/logos/pdf.png" alt="pdf"> 
@@ -57,6 +62,8 @@
 <p dir="rtl">تحويل ملفات PDF الى ملفات DOCX بطريقة تحفظ محتويات الملف بحيث يمكن تعديله.</p>
 </div>
 </a>
+</div>
+<div class="cardcontain">
 <a href="/convert/pdf_ocr" id="link">
 <div class="card">
     <img src="/static/logos/word.png" alt="docx"> <img id='arrow' src="/static/logos/arrow.png" alt="arrow"> <img src="/static/logos/pdf.png" alt="pdf"> 
@@ -64,6 +71,8 @@
 <p dir="rtl">تحويل ملفات PDF الى ملفات DOCX بطريقة تحفظ شكل الملف الأصلي طبق الأصل ولكن لايمكن تعديله.</p>
 </div>
 </a>
+</div>
+<div class="cardcontain">
 <a href="/convert/docx" id="link">
 <div class="card">
     <img src="/static/logos/pdf.png" alt="pdf"> <img id='arrow' src="/static/logos/arrow.png" alt="arrow"> <img src="/static/logos/word.png" alt="docx"> 
@@ -71,6 +80,8 @@
 <p dir="rtl">تحويل ملفات DOCX الى ملفات PDF بطريقة تحفظ المحتويات بشكل تام.</p>
 </div>
 </a>
+</div>
+<div class="cardcontain">
 <a href="/images" id="link">
 <div class="card">
     <img id='icon' src="/static/logos/image.png" alt="image">
@@ -79,6 +90,8 @@
 <br>
 </div>
 </a>
+</div>
+<div class="cardcontain">
 <a href="/videos" id="link">
 <div class="card">
     <img id='icon' src="/static/logos/video.png" alt="video">
@@ -87,6 +100,8 @@
 <br>
 </div>
 </a>
+</div>
+<div class="cardcontain">
 <a href="/compress" id="link">
 <div class="card">
     <img id='icon' src="/static/logos/compress.png" alt="compress">
@@ -95,5 +110,15 @@
 <br>
 </div>
 </a>
-
+</div>
+<div class="cardcontain" style="margin-left: 32.8%;">
+<a href="/files" id="link">
+<div class="card">
+    <img id='icon' src="/static/logos/files.png" alt="compress">
+<h1>الملفات</h1>
+<p dir="rtl">عرض الملفات المرفوعة والمتغيرة من قبلك في النظام.</p>
+<br>
+</div>
+</a>
+</div>
 {% endblock %}

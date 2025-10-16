@@ -111,16 +111,6 @@ def documents(doc):
         case 'pdf_ocr':
             return render_template('upload.html', doc=doc)
 
-            
-
-
-
-
-
-
-
-
-
 @app.route('/images', methods = ['GET','POST'])
 def images():
     user_id = get_or_create_user()
