@@ -29,7 +29,7 @@ A **Flask-based full-stack file converter** that:
 | **FFmpeg**        | Video and image format conversion + compression | [FFmpeg Download](https://ffmpeg.org/download.html)                                |
 
 
-
+---
 
 ### 🧑‍💻 Python Dependencies
 Install via:
