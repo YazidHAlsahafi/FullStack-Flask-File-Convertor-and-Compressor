@@ -52,12 +52,12 @@
 {% endblock %}
 
 {% block body %}
-<div class="cardcontainer">
+<div dir="rtl" class="cardcontainer">
 <div class="cardcontain">
 <a href="/convert/pdf" id="link">
 <div class="card">
-    <img src="/static/logos/word.png" alt="docx"> <img id='arrow' src="/static/logos/arrow.png" alt="arrow"> <img src="/static/logos/pdf.png" alt="pdf"> 
-<h1>DOCX الى PDF</h1>
+    <img src="/static/logos/pdf.png" alt="docx"> <img id='arrow' src="/static/logos/arrow.png" alt="arrow"> <img src="/static/logos/word.png" alt="pdf"> 
+<h1>PDF الى DOCX</h1>
 <p dir="rtl">تحويل ملفات PDF الى ملفات DOCX بطريقة تحفظ محتويات الملف بحيث يمكن تعديله.</p>
 </div>
 </a>
@@ -65,17 +65,35 @@
 <div class="cardcontain">
 <a href="/convert/pdf_ocr" id="link">
 <div class="card">
-    <img src="/static/logos/word.png" alt="docx"> <img id='arrow' src="/static/logos/arrow.png" alt="arrow"> <img src="/static/logos/pdf.png" alt="pdf"> 
-<h1>DOCX الى ocrPDF</h1>
+    <img src="/static/logos/pdf.png" alt="docx"> <img id='arrow' src="/static/logos/arrow.png" alt="arrow"> <img src="/static/logos/word.png" alt="pdf"> 
+<h1>ocrPDF الى DOCX</h1>
 <p dir="rtl">تحويل ملفات PDF الى ملفات DOCX بطريقة تحفظ شكل الملف الأصلي طبق الأصل ولكن لايمكن تعديله.</p>
+</div>
+</a>
+</div>
+<div class="cardcontain">
+<a href="/convert/pdf_text" id="link">
+<div class="card">
+    <img src="/static/logos/pdf.png" alt="pdf"> <img id='arrow' src="/static/logos/arrow.png" alt="arrow"> <img src="/static/logos/word.png" alt="docx"> 
+<h1 dir="rtl">PDF الى DOCX (المحتويات فقط)</h1>
+<p dir="rtl">حفظ محتوى ملفات PDF الى ملف DOCX بطريقة تحفظ المحتوى النصي فقط</p>
+</div>
+</a>
+</div>
+<div class="cardcontain">
+<a href="/convert/pdf_text_only" id="link">
+<div class="card">
+    <img src="/static/logos/pdf.png" alt="pdf"> <img id='arrow' src="/static/logos/arrow.png" alt="arrow"> <img src="/static/logos/text.png" alt="text"> 
+<h1 dir="rtl">PDF الى TXT (المحتويات فقط)</h1>
+<p dir="rtl">حفظ محتوى ملفات PDF الى ملف TXT بطريقة تحفظ المحتوى النصي فقط</p>
 </div>
 </a>
 </div>
 <div class="cardcontain">
 <a href="/convert/docx" id="link">
 <div class="card">
-    <img src="/static/logos/pdf.png" alt="pdf"> <img id='arrow' src="/static/logos/arrow.png" alt="arrow"> <img src="/static/logos/word.png" alt="docx"> 
-<h1>PDF الى DOCX</h1>
+    <img src="/static/logos/word.png" alt="docx"> <img id='arrow' src="/static/logos/arrow.png" alt="arrow"> <img src="/static/logos/pdf.png" alt="pdf"> 
+<h1>DOCX الى PDF</h1>
 <p dir="rtl">تحويل ملفات DOCX الى ملفات PDF بطريقة تحفظ المحتويات بشكل تام.</p>
 </div>
 </a>

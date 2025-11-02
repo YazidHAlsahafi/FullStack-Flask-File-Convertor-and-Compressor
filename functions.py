@@ -5,6 +5,15 @@ from PIL import Image
 from moviepy import VideoFileClip
 import shutil
 import platform
+import fitz  # PyMuPDF
+import arabic_reshaper
+from docx import Document
+from docx.shared import Pt
+from docx.oxml.ns import qn
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+from io import StringIO
+from bidi.algorithm import get_display
+import re
 
 def find_libreoffice():
     """
@@ -35,8 +44,9 @@ def docx_to_pdf(input_path, output_path):
     """
     On Linux servers, the path to soffice.exe will change to just 'libreoffice'
     """
+    libreoffice= find_libreoffice()
     subprocess.run([
-        "C:\Program Files\LibreOffice\program\soffice.exe", "--headless", "--convert-to", "pdf",
+        libreoffice, "--headless", "--convert-to", "pdf",
         "--outdir", str(Path(output_path).parent), str(input_path)
     ], check=True)
 
@@ -54,25 +64,107 @@ def pdf_to_docx(pdf_path, output_path):
 
 
 def ocr_pdf_to_docx(pdf_path, output_path, lang):
-    temp_pdf = "ocr_temp.pdf"
+    pdf_path = Path(pdf_path)
+    output_path = Path(output_path)
+
+    # Save temp PDF in the same folder as output
+    temp_pdf = output_path.parent / "ocr_temp.pdf"
 
     # Run OCRmyPDF command
     subprocess.run([
         "ocrmypdf",
        "--force-ocr",
         "--language", lang,
-        pdf_path,
-        temp_pdf
+        str(pdf_path),
+        str(temp_pdf)
     ], check=True)
 
     # Convert to DOCX
-    cv = Converter(temp_pdf)
-    cv.convert(output_path, start=0, end=None)
+    cv = Converter(str(temp_pdf))
+    cv.convert(str(output_path), start=0, end=None)
     cv.close()
     print(f"✅ OCR-based DOCX saved: {output_path}")
 
 
 
+def pdf_to_docx_text(pdf_path, output_path):
+    """
+    Convert PDF to DOCX using PyMuPDF for extraction.
+    Preserves page structure, applies Arabic reshaper + bidi, RTL alignment, and page numbers.
+    """
+    pdf_path = Path(pdf_path)
+    output_path = Path(output_path)
+    doc = Document()
+    arabic_font = 'Times New Roman'
+    font_size = 14
+
+    pdf = fitz.open(str(pdf_path))
+    for page_number in range(len(pdf)):
+        page = pdf[page_number]
+        page_text = page.get_text("text")  # page-level text
+
+        # Split into lines/paragraphs
+        lines = [line.strip() for line in page_text.splitlines() if line.strip()]
+        for para_text in lines:
+            cleaned = para_text
+            try:
+                reshaped = arabic_reshaper.reshape(cleaned)
+            except Exception:
+                reshaped = cleaned
+            bidi_text = get_display(reshaped)
+
+            paragraph = doc.add_paragraph()
+            run = paragraph.add_run(bidi_text)
+            run.font.name = arabic_font
+            run.font.size = Pt(font_size)
+            try:
+                rPr = run._element.rPr
+                rPr.rFonts.set(qn('w:ascii'), arabic_font)
+                rPr.rFonts.set(qn('w:hAnsi'), arabic_font)
+                rPr.rFonts.set(qn('w:eastAsia'), arabic_font)
+            except Exception:
+                pass
+
+            paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
+            try:
+                paragraph._element.set(qn('w:bidi'), 'true')
+            except Exception:
+                pass
+
+        # Add centered page number
+        page_num_par = doc.add_paragraph()
+        page_num_par.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        run = page_num_par.add_run(f"Page {page_number + 1}")
+        run.font.name = arabic_font
+        run.font.size = Pt(10)
+        try:
+            rPr = run._element.rPr
+            rPr.rFonts.set(qn('w:ascii'), arabic_font)
+            rPr.rFonts.set(qn('w:hAnsi'), arabic_font)
+            rPr.rFonts.set(qn('w:eastAsia'), arabic_font)
+        except Exception:
+            pass
+
+        if page_number != len(pdf) - 1:
+            doc.add_page_break()
+
+    doc.save(str(output_path))
+    pdf.close()
+    print(f"✅ Saved DOCX: {output_path}")
+
+
+def pdf_to_text(pdf_path, output_path):
+    pdf_path = Path(pdf_path)
+    output_path = Path(output_path)
+
+    pdf = fitz.open(pdf_path)
+    file = open(str(output_path), 'wb')
+
+    for page in pdf:
+        text = page.get_text().encode("utf8") 
+        file.write(text)
+    file.close()
+    
 
 
 
@@ -143,3 +235,4 @@ def compress_video(input_path, output_path, level):
         str(output_path)
     ], check=True)
     print(f"🎬 Video compressed at {level} level → {output_path}")
+

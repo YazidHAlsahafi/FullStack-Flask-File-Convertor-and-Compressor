@@ -2,6 +2,7 @@
 
 A **Flask-based full-stack file converter** that:
 - Converts between **PDF ↔ DOCX** with **OCR (Arabic + multilingual support)**.
+- Extracts text from **PDF** files and puts them in **TXT** files.
 - Converts and compresses **image and video files**.
 - Stores files per temporary user session using **Flask + SQLAlchemy**.
 - Automatically removes user data upon logout.
@@ -35,3 +36,29 @@ A **Flask-based full-stack file converter** that:
 Install via:
 ```bash
 pip install -r requirements.txt
+```
+---
+### Running the app
+step 1.
+you will need a redis server running on your device, I chose to run redis through Docker Desktop and I used the following command to start it:
+```bash
+docker run -d --name redis -p 6379:6379 redis:7
+```
+step 2.
+you will need to run celery on the redis port via: 
+```bash
+celery -A app.celery worker --loglevel=info --pool=solo
+```
+Note: --pool=solo is needed if you're running this on a windows device.
+
+step 3.
+run the app: 
+```bash
+python app.py
+```
+
+### Running the test file
+you will need pytest installed, run the test file via:
+```bash
+pytest -v
+```

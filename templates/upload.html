@@ -75,6 +75,42 @@
 <p style="color: red; font-size: 42px; font-weight: bold;">Unsupported file type, only pdf files are supported.
 </p>
 {% endif %}
+{% elif doc == 'pdf_text' %}
+<h1 style="text-align: center; padding: 14px 16px;" dir="rtl"> استخراج المحتوى من ملفات PDF و تغير الصيغة الى DOCX</h1>
+<form method="POST" action="/convert/pdf_text" enctype="multipart/form-data">
+  <label for="files">اختيار الملف</label>
+  <input type="file" name="file" required id="files" style="display:none;" accept=".pdf">
+  <button id="submit" style="font-family: 'Cairo'; font-weight: bold;">رفع الملف</button>
+</form>
+<script>
+  document.querySelector("#files").onchange = function () {
+    const fileName = this.files[0]?.name;
+    const label = document.querySelector("label[for=files]");
+    label.innerText = fileName ?? "اختيار الملف";
+  };
+</script>
+{% if x == 2 %}
+<p style="color: red; font-size: 42px; font-weight: bold;">Unsupported file type, only pdf files are supported.
+</p>
+{% endif %}
+{% elif doc == 'pdf_text_only' %}
+<h1 style="text-align: center; padding: 14px 16px;" dir="rtl">استخراج المحتوى النصي من ملفات PDF وحفظها في ملف TXT</h1>
+<form method="POST" action="/convert/pdf_text_only" enctype="multipart/form-data">
+  <label for="files">اختيار الملف</label>
+  <input type="file" name="file" required id="files" style="display:none;" accept=".pdf">
+  <button id="submit" style="font-family: 'Cairo'; font-weight: bold;">رفع الملف</button>
+</form>
+<script>
+  document.querySelector("#files").onchange = function () {
+    const fileName = this.files[0]?.name;
+    const label = document.querySelector("label[for=files]");
+    label.innerText = fileName ?? "اختيار الملف";
+  };
+</script>
+{% if x == 2 %}
+<p style="color: red; font-size: 42px; font-weight: bold;">Unsupported file type, only pdf files are supported.
+</p>
+{% endif %}
 {% elif doc == 'docx' %}
 <h1 style="text-align: center; padding: 14px 16px;"> pdf الى docx تغير صيغ ملفات </h1>
 <form method="POST" action="/convert/docx" enctype="multipart/form-data">
