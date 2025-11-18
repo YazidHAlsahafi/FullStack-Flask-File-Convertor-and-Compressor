@@ -5,6 +5,7 @@ from pathlib import Path
 from io import BytesIO
 import uuid
 import time
+import os
 
 from celery import Celery
 from celery.result import AsyncResult
@@ -18,7 +19,8 @@ from functions import (
 # --- Flask config ---
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
+db_path = os.environ.get("SQLITE_PATH", "db.sqlite3")
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -27,10 +29,11 @@ UPLOAD_FOLDER = Path(__file__).parent / "uploads"
 UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
 
 # --- Celery config ---
+redis_url = os.environ.get("REDIS_URL", "redis://redis:6379/0")
 celery = Celery(
     app.name,
-    broker='redis://localhost:6379/0',
-    backend='redis://localhost:6379/0',
+    broker=redis_url,
+    backend=redis_url,
 )
 celery.conf.update(
     task_track_started=True,
@@ -152,7 +155,7 @@ def async_ocr_pdf_to_docx(self, input_path, output_path, lang, user_id):
     return {'status': 'تم', 'file_id': file_id}
 
 
-# Pdf text contents to Docx conversion.
+# 4. Pdf text contents to Docx conversion
 @celery.task(bind=True)
 def async_pdf_to_docx_text(self, input_path, output_path, user_id):
     self.update_state(state='PROGRESS', meta={'progress': 10, 'status': 'جاري تحويل ملف PDF الى DOCX...'})
@@ -174,7 +177,7 @@ def async_pdf_to_docx_text(self, input_path, output_path, user_id):
     Path(output_path).unlink()
     return {'status': 'تم', 'file_id': file_id}
 
-# Pdf to Text file conversion.
+# 5. Pdf to Text file conversion.
 @celery.task(bind=True)
 def async_pdf_to_text(self, input_path, output_path, user_id):
     self.update_state(state='PROGRESS', meta={'progress': 10, 'status': 'جاري تحويل ملف PDF الى DOCX...'})
@@ -197,7 +200,7 @@ def async_pdf_to_text(self, input_path, output_path, user_id):
     return {'status': 'تم', 'file_id': file_id}
 
 
-# 4. Image conversion
+# 6. Image conversion
 @celery.task(bind=True)
 def async_convert_image(self, input_path, output_format, user_id):
     self.update_state(state='PROGRESS', meta={'progress': 10, 'status': 'جاري تحويل صيغة ملف الصورة...'})
@@ -220,7 +223,7 @@ def async_convert_image(self, input_path, output_format, user_id):
     return {'status': 'تم', 'file_id': file_id}
 
 
-# 5. Video conversion
+# 7. Video conversion
 @celery.task(bind=True)
 def async_convert_video(self, input_path, output_format, user_id):
     self.update_state(state='PROGRESS', meta={'progress': 10, 'status': 'جاري تحويل صيغة ملف الفيديو...'})
@@ -243,7 +246,7 @@ def async_convert_video(self, input_path, output_format, user_id):
     return {'status': 'تم', 'file_id': file_id}
 
 
-# 6. Image compression
+# 8. Image compression
 @celery.task(bind=True)
 def async_compress_image(self, input_path, output_path, level, user_id):
     self.update_state(state='PROGRESS', meta={'progress': 10, 'status': 'جاري ظغط ملف الصورة...'})
@@ -266,7 +269,7 @@ def async_compress_image(self, input_path, output_path, level, user_id):
     return {'status': 'تم', 'file_id': file_id}
 
 
-# 7. Video compression
+# 9. Video compression
 @celery.task(bind=True)
 def async_compress_video(self, input_path, output_path, level, user_id):
     self.update_state(state='PROGRESS', meta={'progress': 10, 'status': 'جاري ظغط ملف الفيديو...'})
@@ -345,6 +348,10 @@ def convert_images():
         input_path = UPLOAD_FOLDER / file.filename
         file.save(input_path)
 
+        upload = Upload(name=file.filename, data=input_path.read_bytes(), user_id=user_id)
+        db.session.add(upload)
+        db.session.commit()
+        
         task = async_convert_image.apply_async(args=(str(input_path), target_format, user_id))
         return render_template("progress.html", task_id=task.id)
     return render_template("upload_images.html")
@@ -362,6 +369,10 @@ def convert_videos():
         input_path = UPLOAD_FOLDER / file.filename
         file.save(input_path)
 
+        upload = Upload(name=file.filename, data=input_path.read_bytes(), user_id=user_id)
+        db.session.add(upload)
+        db.session.commit()
+
         task = async_convert_video.apply_async(args=(str(input_path), target_format, user_id))
         return render_template("progress.html", task_id=task.id)
     return render_template("upload_video.html")
@@ -375,6 +386,11 @@ def compress_route():
         level = request.form.get("compression_level")
         input_path = UPLOAD_FOLDER / file.filename
         file.save(input_path)
+
+        upload = Upload(name=file.filename, data=input_path.read_bytes(), user_id=user_id)
+        db.session.add(upload)
+        db.session.commit()
+        
         output_path = UPLOAD_FOLDER / f"compressed_{file.filename}"
 
         mime = file.mimetype.lower()
@@ -442,8 +458,16 @@ def logout():
     return redirect('/')
 
 
-# --- Run app ---
-if __name__ == "__main__":
+# --- Initialize database ---
+def init_db():
+    """Initialize database tables if they don't exist."""
     with app.app_context():
         db.create_all()
+        print("✅ Database initialized")
+
+# Initialize database on import (works for both web and worker)
+init_db()
+
+# --- Run app ---
+if __name__ == "__main__":
     app.run(debug=True)

@@ -22,7 +22,6 @@ def find_libreoffice():
     """
     system = platform.system()
     if system == "Windows":
-        # Default installation paths
         possible_paths = [
             r"C:\Program Files\LibreOffice\program\soffice.exe",
             r"C:\Program Files (x86)\LibreOffice\program\soffice.exe"
@@ -33,11 +32,10 @@ def find_libreoffice():
         raise FileNotFoundError("LibreOffice not found. Please install or update path.")
     else:
         # Linux / Mac
-        path = shutil.which("libreoffice") or shutil.which("soffice")
+        path = shutil.which("soffice") or shutil.which("libreoffice")
         if path:
             return path
-        raise FileNotFoundError("LibreOffice not found in PATH.")
-
+        raise FileNotFoundError("LibreOffice not found in PATH. Ensure 'soffice' is installed.")
 
 # --- Conversion Functions ---
 def docx_to_pdf(input_path, output_path):
@@ -170,14 +168,21 @@ def pdf_to_text(pdf_path, output_path):
 
 def convert_image(input_path, output_format):
     """
-    Converts images between formats using Pillow (PIL).
-    Example: PNG -> JPG, WEBP -> PNG, etc.
+    Converts images between formats using Pillow.
+    Works inside Docker by ensuring RGB conversion.
     """
-    img = Image.open(input_path).convert("RGB")  # Convert to RGB to avoid mode issues
-    output_path = Path(input_path).with_suffix(f".{output_format.lower()}")
-    img.save(output_path)
-    print(f"✅ Image converted to {output_path}")
-    return output_path
+    input_path = Path(input_path)
+    output_path = input_path.with_suffix(f".{output_format.lower()}")
+
+    try:
+        img = Image.open(input_path)
+        if img.mode != "RGB":
+            img = img.convert("RGB")
+        img.save(output_path)
+        print(f"✅ Image converted to {output_path}")
+        return output_path
+    except Exception as e:
+        raise RuntimeError(f"Image conversion failed: {e}")
 
 def convert_video(input_path, output_format):
     """

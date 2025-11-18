@@ -12,14 +12,29 @@ A **Flask-based full-stack file converter** that:
 ## ⚙️ Features
 
 ✅ PDF ↔ DOCX conversion (with OCR via `ocrmypdf`)  
+✅ PDF → TXT extraction 
 ✅ Image and video format conversion  
 ✅ User-specific file management (temporary sessions)  
 ✅ Image and video compression (three selectable levels)  
 ✅ SQLite database integration with SQLAlchemy  
 
 ---
+## Running through docker
+This is the intended way to run the application directly through docker (you will need docker on your device): 
 
-## 🧰 Requirements
+Step 1.
+Navigate to the application folder and run the following:
+``` bash 
+   docker-compose build --no-cache
+   docker-compose up -d
+```
+
+Step 2.
+go to http://localhost:8000 and the app should be running.
+
+---
+
+## 🧰 Requirements for running without docker
 
 ### ⚙️ System Dependencies
 
@@ -39,19 +54,19 @@ pip install -r requirements.txt
 ```
 ---
 ### Running the app
-step 1.
+Step 1.
 you will need a redis server running on your device, I chose to run redis through Docker Desktop and I used the following command to start it:
 ```bash
 docker run -d --name redis -p 6379:6379 redis:7
 ```
-step 2.
+Step 2.
 you will need to run celery on the redis port via: 
 ```bash
 celery -A app.celery worker --loglevel=info --pool=solo
 ```
 Note: --pool=solo is needed if you're running this on a windows device.
 
-step 3.
+Step 3.
 run the app: 
 ```bash
 python app.py
