@@ -37,7 +37,6 @@ celery = Celery(
 )
 celery.conf.update(
     task_track_started=True,
-    worker_pool='solo'  # Windows-friendly
 )
 
 # --- Models ---

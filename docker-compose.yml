@@ -38,7 +38,7 @@ services:
     depends_on:
       - redis
       - web
-    command: celery -A app.celery worker --loglevel=info --pool=solo
+    command: celery -A app.celery worker --loglevel=info
 
 volumes:
   redis-data:
